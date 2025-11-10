@@ -1,3 +1,4 @@
+<!-- File setup.loading en-roads api and necessary settings-->
 <!doctype html>
 <html lang="en">
   <head>
@@ -57,7 +58,7 @@
         deferredInitCalls.forEach(call => call())
       }
       document.head.appendChild(embedScript)
-
+      
 
       function initEnRoadsPage(config) {
         const inputSpecs = config.inputSpecs
@@ -93,23 +94,41 @@
           })
         }
 
-        const addCustomGraphSpec = (graphId, idSuffix, updateSpec) => {
-          const graphSpec = graphSpecs.get(graphId)
-          if (!graphSpec) {
-            throw new Error(`No graph spec found for ${graphId}`)
-          }
-          const customId = `${graphId}-${idSuffix}`
-          if (graphSpecs.has(customId)) {
-            throw new Error(`Custom spec already defined for ${customId}`)
-          }
-          const newGraphSpec = updateSpec(graphSpec)
-          graphSpecs.set(customId, {
-            ...newGraphSpec,
-            id: customId
-          })
-        }
 
+        // The iframe content will resize automatically when the page is resized, but
+        // there is no automatic way to have the iframe containers on this page adjust
+        // their height to fit the iframe content.  We therefore listen for resize
+        // events that are sent by the iframes and adjust the iframe element height
+        // to match the content height.
+        window.addEventListener(
+          'message',
+          event => {
+            // Ignore events other than the resize events
+            if (event.data?.kind !== 'en-roads-embed-resize') {
+              return
+            }
 
+            // Find the iframe that sent the message
+            const iframeElems = document.querySelectorAll('iframe')
+            let sender
+            for (const iframeElem of iframeElems) {
+              if (iframeElem.contentWindow === event.source) {
+                sender = iframeElem
+              }
+            }
+
+            // Update the iframe element height to match the content height
+            if (sender) {
+              const contentHeight = event.data.height
+              sender.style = `height: ${contentHeight}px`
+            }
+          },
+          false
+        )
+      }
+    </script>
+  </head>
+<!-- START OF ARTICLE-->
   <body dir="ltr" class="no-debug">
     <!--Header for article-->
   <header>
