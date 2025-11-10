@@ -9,7 +9,7 @@ export default defineConfig(env => {
     // If you want to deploy to a different host or have a different repo
     // name, see:
     //   https://vite.dev/guide/static-deploy.html
-    base: '/en-roads-embed-demo-BP/',
+    base: '/en-roads-embed-demo/',
 
     // Load static files from `static` (instead of the default `public`)
     publicDir: 'static',
